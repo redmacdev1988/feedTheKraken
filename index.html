@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kraken your images! Feed it</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.8.0/fingerprint2.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+function uploadImage() {
+
+      new Fingerprint2().get(function(result, components) {
+        console.log("uploading images....");
+
+        var images = document.getElementById("imgUploader").files;
+        var arrayOfImages = Array.from(images);
+
+        let data = new FormData();
+        for (let i = 0; i < arrayOfImages.length;i++) {
+          console.log(`appending image ${arrayOfImages[i].name} to FormData`);
+          data.append('file', images[i], images[i].fileName);
+        }
+
+        console.log("viewing FormData");
+        for (var pair of data.entries()) {console.log(pair)}
+
+        axios.post("http://localhost:8080/upload?browserIdentity="+result, data, {
+          headers: {
+            'accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': `multipart/form-data; boundary=${data._boundary}`
+          }
+        })
+        .then((response) => {
+            console.log(`received response from server....${response.data}`);
+            let a = document.createElement('a');
+            var linkText = document.createTextNode("download");
+            a.href = response.data;
+            document.getElementById("downloadLink").appendChild(a);
+        })
+        .catch((error) => {
+
+        });
+
+      }) // new fingerprint2
+
+  } // function
+
+</script>
+
+</head>
+
+<!-- execute a script once a web page has completely loaded all content (including images, script files, CSS files, etc.). -->
+<body>
+
+  <div id="page" class="jumbotron">
+    <h1 class="display-4">Kraken Your Images (limit 80)</h1>
+    <p class="lead">Load in your images, and we'll have them <a href="https://kraken.io/">Krakened</a> and sent to your email in a zip!</p>
+    <hr class="my-4">
+    <p id="intro">Kraken.io is an image optimization and compression
+      SaaS platform with additional manipulation capabilities such
+      as image resizing. Our goal is to automatically shrink the byte
+      size of images as much as possible, while keeping the visual
+      information intact, and of consistently high quality to the extent
+       that results never need to be manually checked for fidelity.
+     </p>
+
+    <img id="kraken" src="images/kraken.jpg" ondrop="drop(event)" ondragover="allowDrop(event)" />
+
+    <div>
+      <p id="uploaderSection" class="lead">
+        <input type="file" name="imgUploader" id="imgUploader" multiple=""/>
+        <button class="btn btn-primary btn-lg" name="submit" id="btnSubmit" onclick="uploadImage()">Feed It</button>
+      </p>
+    </div>
+
+
+  </div>
+
+
+
+
+
+
+
+</body>
+</html>

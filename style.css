@@ -1,0 +1,21 @@
+
+
+#intro {
+  width: 50%;
+  float: left;
+}
+
+#kraken {
+  float: right;
+}
+
+div#page {
+  background-color: white;
+}
+
+#uploaderSection {
+  border: 1px solid lightgray;
+  float:left;
+  padding: 15px;
+  border-radius: 25px;
+}
